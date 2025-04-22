@@ -47,6 +47,10 @@ buy_seats()
 search_tickets()
 purchases()
 """
+ROWS = 20
+COLS = 26
+
+
 
 def create_seats(rows, cols):
 
@@ -65,22 +69,44 @@ def create_seats(rows, cols):
 
 def show_seats(seats):
 
+    print("Here is what the hall looks like right now:")
+
     for row in seats:
 
         for col in row:
 
-            print(seats[row][col])
+            print(col, end = " ")
 
-    print()
+        print()
     
 
 def is_available(seats, row, col, length):
 
-    pass
+    if (row < 0 or row > len(seats)):
 
-def buy_seats(row, col, length):
+        return False
 
-    pass
+    if (col < 0 or col + length > len(seats[row])):
+
+        return False
+
+    for i in range(length):
+
+        if (seats[row][col + i] != "a"):
+
+            return False
+
+    return True
+
+def buy_seats(seats, row_num, col_num, length):
+    row = row_num -1
+    col = col_num -1
+    if (is_available(seats, row, col, length)):
+        for i in range(length):
+            seats[row][col + i] = "X"
+        print("YOU BOUGHT A SEET")
+    else:
+        print("YOU NO BOUGHT A SEET")
 
 def search_tickets(name):
 
@@ -105,15 +131,14 @@ Hello! What would you like to do?
 
     if answer == "S":
 
-        # show_seats(seats)
-        pass
+        show_seats(seats)
 
     elif answer == "B":
 
-        row = input("What row would you like to buy in?")
-        col = input("Which seat would you like to start buying from?")
-        length = input("How many seats would you like to buy?")
-        buy_seats(row, col, length)
+        row_num = int(input("What row would you like to buy in?\n"))
+        col_num = int(input("Which seat would you like to start buying from?\n"))
+        length = int(input("How many seats would you like to buy?\n"))
+        buy_seats(seats, row_num, col_num, length)
 
     elif answer == "Q":
 
@@ -121,9 +146,11 @@ Hello! What would you like to do?
 
     return True
 
+
+
+seats = create_seats(ROWS, COLS)
+
+
 while (menu()):
     pass
 
-
-create_seats(5, 5)
-show_seats(seats)
