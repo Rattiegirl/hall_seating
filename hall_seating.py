@@ -82,31 +82,52 @@ def show_seats(seats):
 
 def is_available(seats, row, col, length):
 
+    if (row%2 != 0):
+        return False
     if (row < 0 or row > len(seats)):
-
         return False
-
     if (col < 0 or col + length > len(seats[row])):
-
         return False
-
     for i in range(length):
-
         if (seats[row][col + i] != "a"):
-
             return False
 
     return True
 
-def buy_seats(seats, row_num, col_num, length):
-    row = row_num -1
-    col = col_num -1
+
+def receipt(name, email, row, length):
+    
+    base_price = 80
+    if (row <= 4):
+        base_price = 80
+    elif (row <= 10):
+        base_price = 50
+    elif (row <= 19):
+        base_price = 25
+    total = (base_price + 5)*length*1.0725
+
+    print("Thank you, " + name + ", for buying tickets worth $" + str(total) + ". We will email a copy of your receipt to " + email + ".")
+    return total
+    
+
+
+
+def reserve_seats(seats, row, col, length):
     if (is_available(seats, row, col, length)):
         for i in range(length):
             seats[row][col + i] = "X"
-        print("YOU BOUGHT A SEET")
+        for i in range(length + 2):
+            seats[row + 1][col + i - 1] = "-"
+            seats[row - 1][col + i - 1] = "-"
+        for i in range(2):
+            seats[row][col - 2 + i] = "-"
+            seats[row][col + length + i] = "-"
+        print("You have reserved the seats")
+        return True
     else:
-        print("YOU NO BOUGHT A SEET")
+        print("You didn't reserve the seats")
+        return False
+
 
 def search_tickets(name):
 
@@ -124,6 +145,7 @@ Hello! What would you like to do?
 [S]ee the hall
 [B]uy seats
 [F]ind a ticket
+[D]isplay all purchases and total arena income
 [Q]uit
 
 """
@@ -135,10 +157,17 @@ Hello! What would you like to do?
 
     elif answer == "B":
 
-        row_num = int(input("What row would you like to buy in?\n"))
-        col_num = int(input("Which seat would you like to start buying from?\n"))
         length = int(input("How many seats would you like to buy?\n"))
-        buy_seats(seats, row_num, col_num, length)
+        place = input("Please enter the starting seat (example 4f)\n")
+        alphabet = "abcdefghijklmnopqrstuvwxyz"
+        row = int(place[0])
+        col = alphabet.index(place[1])
+        if (reserve_seats(seats, row, col, length)):
+            name = input("What is the name for the booking?\n")
+            email = input("What is your email?\n")
+            total_price = receipt(name, email, row, length)
+            
+
 
     elif answer == "Q":
 
