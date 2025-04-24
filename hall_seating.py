@@ -1,3 +1,4 @@
+import json
 # """
 # This example code creates a 2d list (2d matrix) that can store seating.
 # The matrix is populated with . since all seats are available
@@ -47,6 +48,7 @@ buy_seats()
 search_tickets()
 purchases()
 """
+
 ROWS = 20
 COLS = 26
 
@@ -94,6 +96,27 @@ def is_available(seats, row, col, length):
 
     return True
 
+def new_purchase(name, email, total):
+
+    a_purchase = {
+        "name": name,
+        "email": email,
+        "total": total
+    }
+
+    file_path = "purchases.json"
+    try:
+        with open(file_path, 'r') as file:
+            purchases = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        purchases = []
+
+    purchases.append(a_purchase)
+
+    with open("purchases.json", "w") as f:
+        json.dump(purchases, f)
+    
+    print("PURCHAZZZZZZZZZZZZZZZZZZZZZZZZ")
 
 def receipt(name, email, row, length):
     
@@ -107,8 +130,11 @@ def receipt(name, email, row, length):
     total = (base_price + 5)*length*1.0725
 
     print("Thank you, " + name + ", for buying tickets worth $" + str(total) + ". We will email a copy of your receipt to " + email + ".")
+    new_purchase(name, email, total)
     return total
-    
+
+
+
 
 
 
