@@ -73,6 +73,7 @@ def show_seats(seats):
 
     print("Here is what the hall looks like right now:")
 
+
     for row in seats:
 
         for col in row:
@@ -96,13 +97,28 @@ def is_available(seats, row, col, length):
 
     return True
 
-def new_purchase(name, email, total):
+def new_purchase(name, email, row, col, length, total):
 
     a_purchase = {
         "name": name,
         "email": email,
+        "row": row,
+        "col": col,
+        "length": length,
         "total": total
     }
+    purchases = load_pp()
+
+    purchases.append(a_purchase)
+    save_pp(purchases)
+    print("A purchase has been recorded")
+
+def save_pp(purchases):
+
+    with open("purchases.json", "w") as f:
+        json.dump(purchases, f)
+
+def load_pp():
 
     file_path = "purchases.json"
     try:
@@ -110,15 +126,9 @@ def new_purchase(name, email, total):
             purchases = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         purchases = []
+    return purchases
 
-    purchases.append(a_purchase)
-
-    with open("purchases.json", "w") as f:
-        json.dump(purchases, f)
-    
-    print("PURCHAZZZZZZZZZZZZZZZZZZZZZZZZ")
-
-def receipt(name, email, row, length):
+def receipt(name, email, row, col, length):
     
     base_price = 80
     if (row <= 4):
@@ -130,7 +140,7 @@ def receipt(name, email, row, length):
     total = (base_price + 5)*length*1.0725
 
     print("Thank you, " + name + ", for buying tickets worth $" + str(total) + ". We will email a copy of your receipt to " + email + ".")
-    new_purchase(name, email, total)
+    new_purchase(name, email, row, col, length, total)
     return total
 
 
@@ -142,31 +152,49 @@ def reserve_seats(seats, row, col, length):
     if (is_available(seats, row, col, length)):
         for i in range(length):
             seats[row][col + i] = "X"
-        for i in range(length + 2):
-            seats[row + 1][col + i - 1] = "-"
-            seats[row - 1][col + i - 1] = "-"
         for i in range(2):
-            seats[row][col - 2 + i] = "-"
-            seats[row][col + length + i] = "-"
-        print("You have reserved the seats")
+            if (col - 2 + i >= 0):
+                seats[row][col - 2 + i] = "-"
+            if (col + length + i <= COLS):
+                seats[row][col + length + i] = "-"
+        # print("You have reserved the seats")
         return True
     else:
-        print("You didn't reserve the seats")
+        # print("You didn't reserve the seats")
         return False
 
 
 def search_tickets(name):
 
-    pass
+    purchases = load_pp()
+    found = False
+    for purchase in purchases:
+        if purchase["name"] == name:
+            print(f"{purchase["name"]} bought ${purchase["total"]} worth of seats. Their email is {purchase["email"]}.\n")
+            found = True
+    if not found:
+        print("There is no purchase with that name")
 
-def purchases():
+def show_income():
+    file_path = "purchases.json"
+    try:
+        with open(file_path, 'r') as file:
+            purchases = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        purchases = []
 
-    pass
+    venue_income = 0
+
+    for purchase in purchases:
+        print(f"{purchase["name"]} bought ${purchase["total"]} worth of seats. Their email is {purchase["email"]}.\n")
+        venue_income += purchase["total"]
+    
+    print(f"The total income the venue has made is {venue_income}")
 
 def menu():
     
     welcome_text = """
-Hello! What would you like to do?
+What would you like to do?
 
 [S]ee the hall
 [B]uy seats
@@ -186,26 +214,35 @@ Hello! What would you like to do?
         length = int(input("How many seats would you like to buy?\n"))
         place = input("Please enter the starting seat (example 4f)\n")
         alphabet = "abcdefghijklmnopqrstuvwxyz"
-        row = int(place[0])
-        col = alphabet.index(place[1])
+        row = int(place[:-1])
+        col = alphabet.index(place[-1])
         if (reserve_seats(seats, row, col, length)):
+            print("You reserved the seats\n")
             name = input("What is the name for the booking?\n")
             email = input("What is your email?\n")
-            total_price = receipt(name, email, row, length)
-            
+            receipt(name, email, row, col, length)
+        else:
+            print("You did not reserve the seats\n")
 
-
+    elif answer == "F":
+        name = input("What is the name for the purchase you are trying to find?\n")
+        search_tickets(name)
+    elif answer == "D":
+        show_income()
     elif answer == "Q":
-
         return False    
-
     return True
 
+def reserve_previous(seats):
+    purchases = load_pp()
+    for purchase in purchases:
+        reserve_seats(seats, purchase["row"], purchase["col"], purchase["length"])
 
 
 seats = create_seats(ROWS, COLS)
 
-
+reserve_previous(seats)
+print("Hello! Welcome to the One Direction concert!")
 while (menu()):
     pass
 
