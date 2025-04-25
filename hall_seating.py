@@ -24,12 +24,12 @@ def create_seats(rows, cols):
 
     for r in range(rows):
         row = []
-
         for c in range(cols):
-            row.append("a")
-
+            if r%2 != 0:
+                row.append("-")
+            else:
+                row.append("a")
         seats.append(row)
-
     return seats
 
 def show_seats(seats):
@@ -202,7 +202,7 @@ def reserve_previous(seats):
 seats = create_seats(ROWS, COLS)
 
 reserve_previous(seats)
-print("Hello! Welcome to the One Direction concert!")
+print("\nHello! Welcome to the One Direction concert!")
 while (menu()):
     pass
 
