@@ -1,37 +1,4 @@
 import json
-# """
-# This example code creates a 2d list (2d matrix) that can store seating.
-# The matrix is populated with . since all seats are available
-# """
-# # our test matrix has 4 rows and 10 columns
-# N_ROW = 20
-# N_COL = 26
-
-# # available seat
-
-# available_seat = 'a'
-
-# # create some available seating
-
-# seating = []
-# for r in range(N_ROW):
-#     row = []
-
-#     for c in range(N_COL):
-#         row.append(available_seat)
-#     seating.append(row)
-
-# seating[15][15] = "X"
-
-# # print available seating
-# for r in range(N_ROW):
-#     print(r+1, end="\t")
-
-#     for c in range(N_COL):
-#         print(seating[r][c], end=" ")
-#     print()
-
-
 """
 menu()
     show_seats()
@@ -48,11 +15,8 @@ buy_seats()
 search_tickets()
 purchases()
 """
-
 ROWS = 20
 COLS = 26
-
-
 
 def create_seats(rows, cols):
 
@@ -68,21 +32,24 @@ def create_seats(rows, cols):
 
     return seats
 
-
 def show_seats(seats):
 
-    print("Here is what the hall looks like right now:")
-
-
-    for row in seats:
-
-        for col in row:
-
-            print(col, end = " ")
-
-        print()
+    print("Here is what the hall looks like right now:\n")
     
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
 
+    print("\t", end="")
+    for i in range(COLS):
+        print(alphabet[i], end=" ")
+    print("\n")
+    num = 0
+    for row in seats:
+        print(num, end= "\t")
+        for col in row:
+            print(col, end = " ")
+        print()
+        num += 1
+    
 def is_available(seats, row, col, length):
 
     if (row%2 != 0):
@@ -143,11 +110,6 @@ def receipt(name, email, row, col, length):
     new_purchase(name, email, row, col, length, total)
     return total
 
-
-
-
-
-
 def reserve_seats(seats, row, col, length):
     if (is_available(seats, row, col, length)):
         for i in range(length):
@@ -162,7 +124,6 @@ def reserve_seats(seats, row, col, length):
     else:
         # print("You didn't reserve the seats")
         return False
-
 
 def search_tickets(name):
 
@@ -189,7 +150,7 @@ def show_income():
         print(f"{purchase["name"]} bought ${purchase["total"]} worth of seats. Their email is {purchase["email"]}.\n")
         venue_income += purchase["total"]
     
-    print(f"The total income the venue has made is {venue_income}")
+    print(f"The total income the venue has made is ${venue_income}")
 
 def menu():
     
@@ -237,7 +198,6 @@ def reserve_previous(seats):
     purchases = load_pp()
     for purchase in purchases:
         reserve_seats(seats, purchase["row"], purchase["col"], purchase["length"])
-
 
 seats = create_seats(ROWS, COLS)
 
