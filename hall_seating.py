@@ -1,20 +1,5 @@
 import json
-"""
-menu()
-    show_seats()
-    buy_seats()
-    search_tickets()
-    purchases()
 
-create_seats()
-
-show_seats()
-free_seat()
-buy_seats()
-
-search_tickets()
-purchases()
-"""
 ROWS = 20
 COLS = 26
 
@@ -169,7 +154,7 @@ What would you like to do?
     if answer == "S":
 
         show_seats(seats)
-
+        
     elif answer == "B":
 
         length = int(input("How many seats would you like to buy?\n"))
@@ -186,12 +171,18 @@ What would you like to do?
             print("You did not reserve the seats\n")
 
     elif answer == "F":
+
         name = input("What is the name for the purchase you are trying to find?\n")
         search_tickets(name)
+
     elif answer == "D":
+
         show_income()
+
     elif answer == "Q":
-        return False    
+
+        return False  
+      
     return True
 
 def reserve_previous(seats):
